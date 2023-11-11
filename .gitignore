@@ -1,0 +1,30 @@
+.DS_Store
+package-lock.json
+.nyc_output/
+
+# Config
+config.development.json
+config.production.json
+config.qa.json
+config.test.json
+
+cache/*
+!/dadi/lib/cache/index.js
+
+# Log
+log/
+log/**/*
+
+npm-debug.log
+node_modules/
+coverage/
+scripts/coverage.svg
+
+persist
+.node-persist/**/*
+public/**/*
+
+workspace/_exif/*
+workspace/_tmp/*
+.vscode/settings.json
+

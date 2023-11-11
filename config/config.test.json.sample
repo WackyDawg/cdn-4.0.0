@@ -1,0 +1,108 @@
+{
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8111
+  },
+  "cluster": false,
+  "logging": {
+    "enabled": true,
+    "level": "info",
+    "path": "./log",
+    "filename": "cdn",
+    "extension": "log",
+    "accessLog": {
+      "enabled": true,
+      "kinesisStream": ""
+    }
+  },
+  "images": {
+    "directory": {
+      "enabled": true,
+      "path": "./test/images"
+    },
+    "s3": {
+      "enabled": false,
+      "accessKey": "",
+      "secretKey": "",
+      "bucketName": "",
+      "region": ""
+    },
+    "remote": {
+      "enabled": false,
+      "path": ""
+    }
+  },
+  "assets": {
+    "directory": {
+      "enabled": true,
+      "path": "./test/assets"
+    },
+    "s3": {
+      "enabled": false,
+      "accessKey": "",
+      "secretKey": "",
+      "bucketName": "",
+      "region": ""
+    },
+    "remote": {
+      "enabled": false,
+      "path": ""
+    }
+  },
+  "caching": {
+    "ttl": 3600,
+    "directory": {
+      "enabled": false,
+      "path": "./cache/"
+    },
+    "redis": {
+      "enabled": false,
+      "host": "",
+      "port": 6379
+    }
+  },
+  "security": {
+    "maxWidth": 2048,
+    "maxHeight": 1024
+  },
+  "auth": {
+    "clientId": "test",
+    "secret": "test",
+    "privateKey": "test"
+  },
+  "cloudfront": {
+    "accessKey": "",
+    "secretKey": ""
+  },
+  "headers": {
+    "useGzipCompression": false,
+    "cacheControl": {
+      "default": "public, max-age=3600",
+      "paths": [
+
+      ],
+      "mimetypes": [
+        { "image/jpeg": "public, max-age=86400" },
+        { "text/css": "public, max-age=86400" },
+        { "text/javascript": "public, max-age=86400" },
+        { "application/javascript": "public, max-age=86400" }
+      ]
+    }
+  },
+  "feedback": false,
+  "status": {
+    "enabled": true,
+    "requireAuthentication": true,
+    "standalone": false,
+    "port": 8112,
+    "routes": [
+      {
+        "route": "/test.jpg?format=png&quality=50&width=800&height=600",
+        "expectedResponseTime": 0.025
+      }
+    ]
+  },
+  "experimental": {
+    "jsTranspiling": true
+  }
+}
