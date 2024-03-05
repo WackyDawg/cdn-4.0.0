@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken')
 const logger = require('@dadi/logger')
 const path = require('path')
-const ejs = require('ejs');
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const fs = require('fs').promises;
+const ejs = require('ejs')
+const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
+const fs = require('fs').promises
 var persist = require('node-persist')
 var uuid = require('uuid')
 
@@ -12,15 +12,18 @@ const config = require(path.join(__dirname, '/../../../config.js'))
 const help = require(path.join(__dirname, '/../help'))
 const User = mongoose.model('User', {
   clientId: String,
-  secret: String,
-});
+  secret: String
+})
 function mustAuthenticate(requestUrl) {
   // Allow internal requests.
   if (requestUrl.indexOf('/_dadi') === 0) {
     return false
   }
 
-  if (requestUrl.indexOf('/api/upload') > -1 && config.get('upload.requireAuthentication') === false) {
+  if (
+    requestUrl.indexOf('/api/upload') > -1 &&
+    config.get('upload.requireAuthentication') === false
+  ) {
     return false
   }
 
@@ -29,74 +32,75 @@ function mustAuthenticate(requestUrl) {
 }
 
 // This attaches middleware to the passed in app instance
-module.exports = function (router) {
-  const tokenRoute = '/token';
-  const installRoute = '/setup';
-  const loginRoute = '/login';
+module.exports = function(router) {
+  const tokenRoute = '/token'
+  const installRoute = '/setup'
+  const loginRoute = '/login'
 
-
-  mongoose.connect('', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  mongoose.connect(
+    'mongodb+srv://julian1234:password2005@cluster0.oyimqiz.mongodb.net/cdn',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }
+  )
 
   // Installation Route
   router.post(installRoute, async (req, res) => {
-    const { clientId, secret } = req.body;
+    const {clientId, secret} = req.body
 
-    const existingUser = await User.findOne({ clientId });
+    const existingUser = await User.findOne({clientId}).maxTimeMS(20000)
     if (existingUser) {
-      return res.status(400).json({ message: "User Already Exists" });
+      res.status(400).send({message: 'User Already Exists'})
     }
 
-    const hashedSecret = await bcrypt.hash(secret, 10);
+    const hashedSecret = await bcrypt.hash(secret, 10)
 
-    const newUser = new User({ clientId, secret: hashedSecret });
-    await newUser.save();
+    const newUser = new User({clientId, secret: hashedSecret})
+    await newUser.save()
 
-    res.json({ message: "User created Sucessfully" })
-
+    res.send({message: 'User created Successfully'})
   })
 
   // Login Route
   // Login route
   router.post(loginRoute, async (req, res) => {
-    const { clientId, secret } = req.body;
+    const {clientId, secret} = req.body
 
     // Find the user by clientId
-    const user = await User.findOne({ clientId });
+    const user = await User.findOne({clientId})
 
     // Check if the user exists and the password is correct
     if (user && (await bcrypt.compare(secret, user.secret))) {
-      const payload = { domain: req.__domain };
+      const payload = {domain: req.__domain}
 
       // Sign a JWT token.
       jwt.sign(
         payload,
         config.get('auth.privateKey', req.__domain),
         {
-          expiresIn: config.get('auth.tokenTtl', req.__domain),
+          expiresIn: config.get('auth.tokenTtl', req.__domain)
         },
         (err, token) => {
           if (err) {
-            logger.error({ module: 'auth' }, err);
-            return res.status(500).json({ message: 'Internal Server Error' });
+            logger.error({module: 'auth'}, err)
+            return res.status(500).json({message: 'Internal Server Error'})
           }
 
-          res.setHeader('Content-Type', 'application/json');
-          res.setHeader('Cache-Control', 'no-store');
-          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Content-Type', 'application/json')
+          res.setHeader('Cache-Control', 'no-store')
+          res.setHeader('Pragma', 'no-cache')
           res.json({
             accessToken: token,
             tokenType: 'Bearer',
-            expiresIn: config.get('auth.tokenTtl'),
-          });
+            expiresIn: config.get('auth.tokenTtl')
+          })
         }
-      );
+      )
     } else {
-      return fail('NoAccess', res);
+      return fail('NoAccess', res)
     }
-  });
+  })
 
   // Authorize
   router.use((req, res, next) => {
@@ -136,16 +140,16 @@ module.exports = function (router) {
   })
 
   router.get('/setup', async (req, res) => {
-    const renderedHtml = await renderTemplate('register', { message: '' });
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(renderedHtml);
-  });
+    const renderedHtml = await renderTemplate('register', {message: ''})
+    res.writeHead(200, {'Content-Type': 'text/html'})
+    res.end(renderedHtml)
+  })
 
   router.get('/login', async (req, res) => {
-    const renderedHtml = await renderTemplate('login', { message: '' });
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    res.end(renderedHtml);
-  });
+    const renderedHtml = await renderTemplate('login', {message: ''})
+    res.writeHead(200, {'Content-Type': 'text/html'})
+    res.end(renderedHtml)
+  })
 
   // Setup token service.
   router.use(tokenRoute, (req, res, next) => {
@@ -189,7 +193,7 @@ module.exports = function (router) {
       },
       (err, token) => {
         if (err) {
-          logger.error({ module: 'auth' }, err)
+          logger.error({module: 'auth'}, err)
 
           return fail('JWTError', res)
         }
@@ -210,9 +214,14 @@ module.exports = function (router) {
 
   // Helper function to render EJS templates
   async function renderTemplate(templateName, data) {
-    const templatePath = path.join(__dirname, '../../../public/auth', 'views', `${templateName}.ejs`);
-    const templateContent = await fs.readFile(templatePath, 'utf-8');
-    return ejs.render(templateContent, data);
+    const templatePath = path.join(
+      __dirname,
+      '../../../public/auth',
+      'views',
+      `${templateName}.ejs`
+    )
+    const templateContent = await fs.readFile(templatePath, 'utf-8')
+    return ejs.render(templateContent, data)
   }
 
   function fail(type, res) {
