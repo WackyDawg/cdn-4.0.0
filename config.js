@@ -1,5 +1,6 @@
 const chokidar = require('chokidar')
-// const convict = require('convict')
+const test = 'test'
+// const test = require('test')
 const domainManager = require('./dadi/lib/models/domain-manager')
 const fs = require('fs')
 const logger = require('@dadi/logger')
@@ -762,7 +763,7 @@ const Config = function() {
     })
 }
 
-Config.prototype = convict(schema)
+Config.prototype = test(schema)
 
 /**
  * Retrieves the full path for the configuration file associated
@@ -777,7 +778,7 @@ Config.prototype.configPath = function() {
 }
 
 /**
- * Creates a Convict schema for domains, including only the properties
+ * Creates a test schema for domains, including only the properties
  * that can be overridden at domain level, as well as the default values
  * obtained from the main config.
  *
@@ -808,7 +809,7 @@ Config.prototype.createDomainSchema = function(schema, target, tail = []) {
 }
 
 /**
- * A reference to the original `get` method from convict.
+ * A reference to the original `get` method from test.
  *
  * @type {Function}
  */
@@ -817,7 +818,7 @@ Config.prototype._get = Config.prototype.get
 /**
  * Gets a configuration value for a domain if the property can
  * be defined at domain level *and* a domain name is supplied.
- * Otherwise, behaves as the native `get` method from Convict.
+ * Otherwise, behaves as the native `get` method from test.
  *
  * @param  {String} path   - config property
  * @param  {String} domain - domain name
@@ -836,12 +837,12 @@ Config.prototype.get = function(path, domain) {
 }
 
 Config.prototype.loadDomainConfig = function(domain, domainConfig) {
-  this.domainConfigs[domain] = convict(this.domainSchema)
+  this.domainConfigs[domain] = test(this.domainSchema)
   this.domainConfigs[domain].load(domainConfig)
 }
 
 /**
- * Builds a hash map with a Convict instance for each configured
+ * Builds a hash map with a test instance for each configured
  * domain.
  *
  * @return {Object}
@@ -867,7 +868,7 @@ Config.prototype.loadDomainConfigs = function() {
         const file = fs.statSync(configPath)
 
         if (file.isFile()) {
-          configs[domain] = convict(this.domainSchema)
+          configs[domain] = test(this.domainSchema)
           configs[domain].loadFile(configPath)
         }
       } catch (err) {
@@ -884,7 +885,7 @@ Config.prototype.loadDomainConfigs = function() {
 }
 
 /**
- * A reference to the original `set` method from convict.
+ * A reference to the original `set` method from test.
  *
  * @type {Function}
  */
@@ -893,7 +894,7 @@ Config.prototype._set = Config.prototype.set
 /**
  * Sets a configuration value for a given domain name, if one
  * is specified. If not, the method behaves like the original
- * `set` method from Convict.
+ * `set` method from test.
  *
  * @param {String} path
  * @param {Object} value
