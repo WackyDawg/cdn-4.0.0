@@ -35,7 +35,7 @@ process
 // Let's ensure there's at least a dev config file here.
 const devConfigPath = path.join(
   __dirname,
-  '/../../config/config.development.json'
+  '../../config/config.development.json'
 )
 
 fs.stat(devConfigPath, (err, stats) => {
