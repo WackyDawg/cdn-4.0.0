@@ -1,5 +1,5 @@
 const chokidar = require('chokidar')
-const convict = require('convict')
+// const convict = require('convict')
 const domainManager = require('./dadi/lib/models/domain-manager')
 const fs = require('fs')
 const logger = require('@dadi/logger')
@@ -558,17 +558,20 @@ const schema = {
       default: false
     },
     requireAuthentication: {
-      doc: 'If true, POST requests must include the authentication credentials specified in the `auth` property of the configuration file',
+      doc:
+        'If true, POST requests must include the authentication credentials specified in the `auth` property of the configuration file',
       format: Boolean,
       default: true
     },
     extractColours: {
-      doc: 'If true, extracts colour information from the uploaded image and returns as JSON along with the file upload result',
+      doc:
+        'If true, extracts colour information from the uploaded image and returns as JSON along with the file upload result',
       format: Boolean,
       default: true
     },
     pathFormat: {
-      doc: 'Determines the format for subdirectories that are created to store uploads',
+      doc:
+        'Determines the format for subdirectories that are created to store uploads',
       format: ['none', 'date', 'datetime', 'sha1/4', 'sha1/5', 'sha1/8'],
       default: 'date'
     }
